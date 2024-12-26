@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homework</title>
+    <style>
+        body 
+        {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: rgb(255, 255, 255);
+        }
+
+        .form-container 
+        {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 10px;
+            align-items: center;
+            background-color: rgb(226, 226, 226);
+            padding: 2%;
+            border-radius: 1%;
+            margin-top: 20px;
+            width: 40%;
+            border: 2px solid gray;
+        }
+
+        .form-container button
+         {
+            grid-column: span 2;
+            justify-self: center;
+            width: 50%;
+            height: 40px;
+            background-color: rgb(177, 177, 177);
+            font-size: 1em;
+            border-radius: 1%;
+        }
+
+        .form-container button:hover 
+        {
+            background-color: rgb(48, 48, 48);
+            color: rgb(255, 255, 255);
+        }
+
+       
+
+        .rectangle-container
+         {
+            margin-top: 20px;
+            width: 90%;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .rectangle 
+        {
+            font-size: 0.8em;
+            padding: 5px;
+            border: 3px solid black;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .rectangle p 
+        {
+            margin: 5px 0;
+        }
+
+        .form-container input 
+        {
+            padding: 5px;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Создайте свой цветной блок</h1>
+    <div class="form-container">
+
+        <label for="width">Ширина (px):</label>
+        <input type="number" id="width" min="1" placeholder="Задайте ширину">
+
+        <label for="height">Высота (px):</label>
+        <input type="number" id="height" min="1" placeholder="Задайте высоту">
+
+        <label for="colorName">Название цвета:</label>
+        <input type="text" id="colorName" placeholder="Дайте название">
+
+        <label>Цвет (RGB):</label>
+        <div style="display: flex; gap: 5px;">
+            <input type="number" id="r" min="0" max="255" placeholder="R">
+            <input type="number" id="g" min="0" max="255" placeholder="G">
+            <input type="number" id="b" min="0" max="255" placeholder="B">
+        </div>
+
+        <button id="saveButton">Сгенерировать</button>
+    </div>
+
+    <h2>Результат:</h2>
+
+    <div class="rectangle-container" id="rectangleContainer"></div>
+
+    <script>
+        class Rectangle 
+        {
+            constructor(width, height, colorName, rgbValues)
+            {
+                this.width = width;
+                this.height = height;
+                this.colorName = colorName;
+                this.rgbValues = rgbValues;
+            }
+
+            render(targetContainer) 
+            {
+                const rectElement = document.createElement('div');
+                rectElement.style.width = `${this.width}px`;
+                rectElement.style.height = `${this.height}px`;
+
+                rectElement.style.backgroundColor = `rgb(${this.rgbValues.join(',')})`;
+
+                rectElement.classList.add('rectangle');
+
+                const nameElement = document.createElement('p');
+                nameElement.textContent = `Название: ${this.colorName}`;
+
+                const rgbElement = document.createElement('p');
+                rgbElement.textContent = `Цвет: rgb(${this.rgbValues.join(',')})`;
+
+                const widthElement = document.createElement('p');
+                widthElement.textContent = `Ширина: ${this.width}px`;
+
+                const heightElement = document.createElement('p');
+                heightElement.textContent = `Высота: ${this.height}px`;
+
+                rectElement.append(nameElement, rgbElement, widthElement, heightElement);
+                targetContainer.appendChild(rectElement);
+            }
+        }
+
+        document.getElementById('saveButton').addEventListener('click', () => {
+
+            const widthInput = parseInt(document.getElementById('width').value);
+
+            const heightInput = parseInt(document.getElementById('height').value);
+
+            const colorNameInput = document.getElementById('colorName').value.trim();
+            
+            const redValue = parseInt(document.getElementById('r').value);
+            const greenValue = parseInt(document.getElementById('g').value);
+            const blueValue = parseInt(document.getElementById('b').value);
+
+            if (!widthInput || !heightInput || !colorNameInput || isNaN(redValue) || isNaN(greenValue) || isNaN(blueValue)) 
+            {
+                alert('Вы не заполнили все поля корректно. Пожалуйста, попробуйте ещё раз.');
+                return;
+            }
+
+            if ([redValue, greenValue, blueValue].some(value => value < 0 || value > 255)) 
+            {
+                alert('Значения для RGB допустимы только в диапазоне от 0 до 255.');
+                return;
+            }
+
+            const rectangle = new Rectangle(widthInput, heightInput, colorNameInput, [redValue, greenValue, blueValue]);
+            const container = document.getElementById('rectangleContainer');
+            rectangle.render(container);
+
+            console.log(JSON.stringify(rectangle));
+        });
+    </script>
+</body>
+</html>
